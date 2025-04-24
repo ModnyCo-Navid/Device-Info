@@ -1,0 +1,3 @@
+#!/bin/bash
+echo "device-info installed successfully. Use the command: device-info --help"
+chmod +x /usr/local/bin/device-info

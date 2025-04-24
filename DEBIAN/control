@@ -1,0 +1,8 @@
+Package: device-info
+Version: 1.0
+Section: utils
+Priority: optional
+Architecture: all
+Depends: bash
+Maintainer: Navid Kashi <navid@modnyco.com>
+Description: A command-line tool to retrieve CPU ID, MMC serial, and MAC addresses.

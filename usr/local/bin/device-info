@@ -1,0 +1,93 @@
+#!/bin/bash
+
+show_help() {
+    echo "Usage: $0 [OPTIONS]"
+    echo
+    echo "Options:"
+    echo "  --cpu-id         Retrieve CPU serial number (CPU ID)"
+    echo "  --mmc-serial     Retrieve MMC serial number"
+    echo "  --wlan-mac       Retrieve WLAN MAC address"
+    echo "  --ethernet-mac   Retrieve Ethernet MAC address"
+    echo "  --all            Show all of the above"
+    echo "  --help           Display this help message"
+}
+
+get_cpu_id() {
+    cpu_id=$(awk -F ': ' '/Serial/ {print $2}' /proc/cpuinfo | tr -d ' ')
+    if [ -z "$cpu_id" ]; then
+        echo "CPU ID: Not found"
+    else
+        echo "CPU ID: 0x$cpu_id"
+    fi
+}
+
+get_mmc_serial() {
+    for mmc in /sys/class/mmc_host/mmc*/mmc*/; do
+        if [ -f "$mmc"/serial ]; then
+            mmc_serial=$(cat "$mmc"/serial)
+            echo "MMC Serial Number: $mmc_serial"
+            return
+        fi
+    done
+    echo "MMC Serial Number: Not found"
+}
+
+get_wlan_mac() {
+    for iface in /sys/class/net/*; do
+        iface_name=$(basename "$iface")
+        if [[ "$iface_name" == wl* ]]; then
+            wlan_mac=$(cat "$iface"/address)
+            echo "WLAN MAC Address: $wlan_mac"
+            return
+        fi
+    done
+    echo "WLAN MAC Address: Not found"
+}
+
+get_ethernet_mac() {
+    for iface in /sys/class/net/*; do
+        iface_name=$(basename "$iface")
+        if [[ "$iface_name" == eth* || "$iface_name" == en* ]]; then
+            eth_mac=$(cat "$iface"/address)
+            echo "Ethernet MAC Address: $eth_mac"
+            return
+        fi
+    done
+    echo "Ethernet MAC Address: Not found"
+}
+
+if [ $# -eq 0 ]; then
+    show_help
+    exit 1
+fi
+
+for arg in "$@"; do
+    case $arg in
+        --cpu-id)
+            get_cpu_id
+            ;;
+        --mmc-serial)
+            get_mmc_serial
+            ;;
+        --wlan-mac)
+            get_wlan_mac
+            ;;
+        --ethernet-mac)
+            get_ethernet_mac
+            ;;
+        --all)
+            get_cpu_id
+            get_mmc_serial
+            get_wlan_mac
+            get_ethernet_mac
+            ;;
+        --help)
+            show_help
+            ;;
+        *)
+            echo "Unknown option: $arg"
+            show_help
+            exit 1
+            ;;
+    esac
+done
