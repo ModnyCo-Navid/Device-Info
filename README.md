@@ -6,6 +6,13 @@ A lightweight CLI tool to retrieve hardware information on ARM Linux devices:
 - WLAN MAC address
 - Ethernet MAC address
 
+## 📦 Installation
+
+```bash
+curl -LO https://github.com/ModnyCo-Navid/Device-Info/raw/refs/heads/main/device-info_1.0_arm64.deb
+sudo dpkg -i device-info_1.0_arm64.deb
+```
+
 ## ⚙️ Build
 
 ### 1. Build the `.deb` package
